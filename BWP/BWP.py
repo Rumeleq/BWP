@@ -4,8 +4,7 @@ import math
 import random 
 
 
-
-class LevelManager():
+class LevelManager:
     def __init__(self, current_level):
         pygame.mixer.init()
         self.current_level = current_level
@@ -39,15 +38,11 @@ class LevelManager():
         self.level_5_zombie_interval = 3000
         self.level_5_zombie_amount_per_spawn = 5
 
-        
-
-
     def check_zombies_dead(self, zombie_group):
         for zombie in zombie_group:
             if zombie.alive:
                 return False
         return True
-
 
     def level_up(self, level):
         if self.check_zombies_dead(zombie_group) and self.zombie_spawner.zombie_amount <= 0 and self.player.alive:
@@ -72,7 +67,6 @@ class LevelManager():
             self.transition(level)
             self.horde_playing = False
 
-    
     def repetitive_levels(self):
         self.zombie_spawner.spawn_zombies()
 
@@ -99,12 +93,11 @@ class LevelManager():
         if not self.channel.get_busy() or not self.horde_playing:
             self.horde_playing = True
             self.horde_sound.play(-1)
-            
-        if self.player.alive == False:
+
+        if not self.player.alive:
             self.player_death()
 
         pygame.display.flip()
-
 
     def player_death(self):
         self.player.kill()
@@ -130,7 +123,6 @@ class LevelManager():
 
         pygame.display.flip()
         pygame.time.wait(5000)
-
 
     def transition(self, level):
         background = pygame.Surface((screen_width, screen_height), pygame.SRCALPHA)
@@ -164,7 +156,6 @@ class LevelManager():
         pygame.display.flip()
         pygame.time.delay(8000)
 
-
     def level_1(self):
         if not self.objects_created:
             self.objects_created = True
@@ -180,8 +171,7 @@ class LevelManager():
         self.repetitive_levels()
         if self.player.alive:
             self.level_up(2)
-        
-        
+            
     def level_2(self):
         if not self.objects_created:
             self.objects_created = True
@@ -190,11 +180,9 @@ class LevelManager():
             self.player = Player(self.gun, self.gun.rect)
             player_group.add(self.player)
 
-
         self.repetitive_levels()
         if self.player.alive:
             self.level_up(3)
-
 
     def level_3(self):
         if not self.objects_created:
@@ -204,11 +192,9 @@ class LevelManager():
             self.player = Player(self.gun, self.gun.rect)
             player_group.add(self.player)
 
-
         self.repetitive_levels()
         if self.player.alive:
             self.level_up(4)
-
 
     def level_4(self):
         if not self.objects_created:
@@ -218,11 +204,9 @@ class LevelManager():
             self.player = Player(self.gun, self.gun.rect)
             player_group.add(self.player)
 
-
         self.repetitive_levels()
         if self.player.alive:
             self.level_up(5)
-
 
     def level_5(self):
         if not self.objects_created:
@@ -236,7 +220,6 @@ class LevelManager():
         self.level_up(7)
 
     
-
 class Cursor(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -245,7 +228,6 @@ class Cursor(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.center = pygame.mouse.get_pos()
-
 
 
 class HealthBar(pygame.sprite.Sprite):
@@ -267,14 +249,14 @@ class HealthBar(pygame.sprite.Sprite):
         self.max_health_color = 49.8, 48.6, 40.8
         self.border_color = 40, 40, 50
 
-        self.max_health_rect =  pygame.Rect(self.x_pos, self.y_pos, self.width, self.height)
+        self.max_health_rect = pygame.Rect(self.x_pos, self.y_pos, self.width, self.height)
         self.outline_rect = pygame.Rect(self.x_pos, self.y_pos, self.width + self.outline_width, self.height + self.outline_width)
         self.outline_rect.center = self.max_health_rect.center
         self.current_health_rect = pygame.Rect(self.x_pos, self.y_pos, int(self.width * self.health_ratio), self.height)
         self.heart_image_rect.center = self.outline_rect.midleft
 
     def create(self, screen):
-        if self.current_hp > 0 and self.current_hp < self.max_hp or self.heart == True:
+        if 0 < self.current_hp < self.max_hp or self.heart is True:
             pygame.draw.rect(screen, self.border_color, self.outline_rect, self.outline_width)
             pygame.draw.rect(screen, self.max_health_color, self.max_health_rect)
             pygame.draw.rect(screen, self.current_health_color, self.current_health_rect)
@@ -290,7 +272,6 @@ class HealthBar(pygame.sprite.Sprite):
 
         self.health_ratio = self.current_hp / self.max_hp
         self.current_health_rect.width = int(self.width * self.health_ratio)
-
 
 
 class AmmoDisplay(pygame.sprite.Sprite):
@@ -312,15 +293,13 @@ class AmmoDisplay(pygame.sprite.Sprite):
         screen.blit(self.ammo_image, self.ammo_image_rect)
         screen.blit(self.ammo_count_text, self.ammo_count_rect)
 
-
     def update(self, player_ammo_amount):
         if player_ammo_amount > 0 and player_ammo_amount > self.player_max_ammo / 5:
             self.ammo_count_text = self.font.render(f"{player_ammo_amount}", False, (255, 255, 255))
-        elif player_ammo_amount <= self.player_max_ammo / 5 and player_ammo_amount > 0:
+        elif self.player_max_ammo / 5 >= player_ammo_amount > 0:
             self.ammo_count_text = self.font.render(f"{player_ammo_amount}", False, (255, 255, 0))
         else:
             self.ammo_count_text = self.font.render(f"{player_ammo_amount}", False, (200, 0, 0))
-
 
 
 class Player(pygame.sprite.Sprite):
@@ -369,7 +348,6 @@ class Player(pygame.sprite.Sprite):
         self.bullet_sound = pygame.mixer.Sound("data/audio/Rifle.ogg")
         self.empty_sound = pygame.mixer.Sound("data/audio/EmptyGun.ogg")
 
-
     def moving(self):
         keys = pygame.key.get_pressed()
         x_direction = 0
@@ -408,9 +386,8 @@ class Player(pygame.sprite.Sprite):
             self.walking = False
             self.sprites_index = 0
 
-
     def healing(self):
-        if self.current_hp < self.max_hp and self.current_heal_time - self.last_time_healed >= 1000 and self.hp_last_value == self.current_hp:
+        if self.max_hp > self.current_hp == self.hp_last_value and self.current_heal_time - self.last_time_healed >= 1000:
             self.last_time_healed = pygame.time.get_ticks()
             self.current_hp += 2
             self.hp_last_value = self.current_hp
@@ -418,14 +395,12 @@ class Player(pygame.sprite.Sprite):
             self.hp_last_value = self.current_hp
         self.current_heal_time = pygame.time.get_ticks()
 
-
     def animation(self):
-        if self.walking == True:
+        if self.walking:
             self.sprites_index += 0.25
             if int(self.sprites_index) >= len(self.sprites):
                 self.sprites_index = 0
         self.image = self.sprites[int(self.sprites_index)]
-
 
     def shoot(self):
         if not level_manager.current_level == "intro" and not level_manager.current_level == "transition" and not level_manager.current_level == "ending":
@@ -441,7 +416,6 @@ class Player(pygame.sprite.Sprite):
                     self.last_bullet_time = pygame.time.get_ticks()
                     self.empty_sound.play()
             self.current_bullet_time = pygame.time.get_ticks()
-
 
     def update(self):
         if self.current_hp <= 0:
@@ -468,7 +442,7 @@ class Player(pygame.sprite.Sprite):
             dy = -(pygame.mouse.get_pos()[1] - self.gun_rect.centery)
             angle = math.degrees(math.atan2(dy, dx))
             rotated_gun_image = pygame.transform.rotate(self.gun.image, angle)
-            rotated_gun_rect = rotated_gun_image.get_rect(center = (self.gun_rect.centerx, self.gun_rect.centery))
+            rotated_gun_rect = rotated_gun_image.get_rect(center=(self.gun_rect.centerx, self.gun_rect.centery))
             self.shadow_rect.center = self.rect.midbottom
             screen.blit(self.shadow, self.shadow_rect)
             screen.blit(rotated_gun_image, rotated_gun_rect)
@@ -476,13 +450,11 @@ class Player(pygame.sprite.Sprite):
             self.image = pygame.transform.scale2x(self.image)
         
 
-
 class Gun(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load("data/assets/gun/gun2x.png").convert_alpha()
         self.rect = self.image.get_rect()
-
 
 
 class Bullet(pygame.sprite.Sprite):
@@ -511,7 +483,6 @@ class Bullet(pygame.sprite.Sprite):
         self.x = start_x
         self.y = start_y
 
-
     def update(self, zombie_group):
         self.x = self.x + self.dx
         self.y = self.y + self.dy
@@ -520,7 +491,6 @@ class Bullet(pygame.sprite.Sprite):
 
         if not pygame.display.get_surface().get_rect().colliderect(self.rect):
             self.kill()
-
 
 
 class Zombie(pygame.sprite.Sprite):
@@ -602,7 +572,6 @@ class Zombie(pygame.sprite.Sprite):
                 self.start_pos = (random.randint(1300, 1320), random.randint(200, 670))
                 self.rect.bottomleft = self.start_pos
 
-
     def attack(self):
         self.attack_sprites_index += 0.15
         if int(self.attack_sprites_index) >= len(self.attack_sprites):
@@ -614,7 +583,6 @@ class Zombie(pygame.sprite.Sprite):
             self.attack_sprites_index += self.speed / 10
         self.attack_current = pygame.time.get_ticks()
 
-
     def get_shot(self, bullet_group):
         global kills
         if self.alive:
@@ -625,7 +593,6 @@ class Zombie(pygame.sprite.Sprite):
             if self.current_hp <= 0:
                 self.alive = False
                 kills += 1
-
 
     def animation(self):
         if self.alive:
@@ -653,17 +620,16 @@ class Zombie(pygame.sprite.Sprite):
             if not self.flag2:
                 dx = level_manager.player.rect.centerx - self.rect.centerx
                 dy = level_manager.player.rect.centery - self.rect.centery
-                walk_angle = math.atan2(dy,dx)
+                walk_angle = math.atan2(dy, dx)
                 walk_dx = math.cos(walk_angle) * self.speed
                 if abs(walk_dx) == walk_dx:
                     self.image = pygame.transform.flip(self.image, True, False)
-
 
     def walk(self):
         if self.rect.left > 0 and self.rect.top > 0 and self.rect.bottom < screen_height and self.rect.right < screen_width:
             dx = level_manager.player.rect.centerx - self.rect.centerx
             dy = level_manager.player.rect.centery - self.rect.centery
-            walk_angle = math.atan2(dy,dx)
+            walk_angle = math.atan2(dy, dx)
             walk_dx = math.cos(walk_angle) * self.speed
             walk_dy = math.sin(walk_angle) * self.speed
             self.rect.centerx += walk_dx
@@ -679,7 +645,6 @@ class Zombie(pygame.sprite.Sprite):
                 self.rect.right += self.speed
             else:
                 self.rect.left -= self.speed
-
 
     def update(self, bullet_group):
         if self.alive:
@@ -709,15 +674,13 @@ class Zombie(pygame.sprite.Sprite):
             self.image = pygame.transform.scale2x(self.image)
 
 
-
-class ZombieSpawner():
+class ZombieSpawner:
     def __init__(self, zombie_amount, zombie_interval, zombie_amount_per_spawn):
         self.zombie_amount = zombie_amount
         self.zombie_interval = zombie_interval
         self.zombie_amount_per_spawn = zombie_amount_per_spawn
         self.current_zombie_time = 0
         self.last_zombie_time = 0
-
 
     def spawn_zombies(self):
         if self.current_zombie_time - self.last_zombie_time >= random.randint(self.zombie_interval-100, self.zombie_interval+100) and self.zombie_amount > 0:
@@ -730,13 +693,12 @@ class ZombieSpawner():
         self.current_zombie_time = pygame.time.get_ticks()
 
 
-
 def play_sound(path):
     sound = pygame.mixer.Sound(path)
     sound.play()
 
 
-#Config
+# Config
 pygame.init()
 screen_width, screen_height = 1280, 720
 screen = pygame.display.set_mode((screen_width, screen_height))
@@ -745,9 +707,9 @@ favicon = pygame.image.load("data/assets/logo/favicon.png").convert_alpha()
 pygame.display.set_icon(favicon)
 clock = pygame.time.Clock()
 pygame.mouse.set_visible(False)
-#Config
+# Config
 
-#Levele i kille
+# Levele i kille
 try:
     with open("data/txt/save.txt", "r") as file:
         current_level = file.readline().strip()
@@ -755,9 +717,9 @@ try:
 except IOError:
     current_level = "intro"
     kills = 0
-#Levele i kille
+# Levele i kille
 
-#Grupy i instancje
+# Grupy i instancje
 level_manager = LevelManager(current_level)
 cursor_group = pygame.sprite.GroupSingle()
 bullet_group = pygame.sprite.Group()
@@ -766,73 +728,73 @@ dead_zombie_group = pygame.sprite.Group()
 player_group = pygame.sprite.GroupSingle()
 cursor = Cursor()
 cursor_group.add(cursor)
-#Grupy i instancje
+# Grupy i instancje
 
-#Grafika
+# Grafika
 background = pygame.image.load("data/assets/background/tło.png")
 background = pygame.transform.scale(background, (screen_width, screen_height))
-#Grafika
+# Grafika
 
-#intro
+# intro
 lines = [
     "Dawno, dawno temu,",
-    #"",
+    # "",
     "w odległych Wadowicach",
-    #"",
+    # "",
     "narodził się Karol zwany Wojtyłą,",
-    #"",
+    # "",
     "który nie tylko poszedł na kremówki po maturze,",
-    #"",
+    # "",
     "ale też zasiadł na tronie Stolicy Apostolskiej.",
     "",
     "",
     "Roku pańskiego 2137 wybuchła zainicjowana",
-    #"",
+    # "",
     "przez nieznanego z imienia dyrektora z Międzychodu",
-    #"",
+    # "",
     "epidemia nieumarłych trupów.",
-    #"",
+    # "",
     "Wkrótce cała Ziemia została podbita",
-    #"",
+    # "",
     "przez zastępy nieumarłych...",
     "",
     "",
     "Cała?",
-    #"",
+    # "",
     "Nie!",
     "",
     "",
     "Jedna, jedyna osada,",
-    #"",
+    # "",
     "zamieszkana przez nieugiętych Polaków,",
-    #"",
+    # "",
     "wciąż stawia opór najeźdźcom",
-    #"",
+    # "",
     "i uprzykrza życie hordom truposzy.",
     "",
     "",
     "Są to właśnie Wadowice,",
-    #"",
+    # "",
     "rodzinne miasto Karola,",
-    #"",
+    # "",
     "w którym zebrał on wszystkich,",
-    #"",
+    # "",
     "których zdołał ocalić i którymi teraz przewodził.",
     "",
     "",
     "Zdawało się, że cała nadzieja na powrót człowieka",
-    #"",
+    # "",
     "na szczyt łańcucha pokarmowego byłą stracona,",
-    #"",
+    # "",
     "a gniew boży nieprzebłagany.",
     "",
     "",
     "Papież Polak, syn Polskiej ziemi, Jan Paweł II,",
-    #"",
+    # "",
     "wiary jednak nie stracił i przyrzekł odbicie",
-    #"",
+    # "",
     "Stolicy Piotrowej i Królestwa Bożego na Ziemi",
-    #"",
+    # "",
     "oraz wyzwolenie tych, którzy przetrwali.",
     "",
     "",
@@ -863,7 +825,7 @@ for rendered_line in text_rendered:
 
 star_play = False
 
-#intro
+# intro
 while level_manager.current_level == "intro":
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -885,7 +847,7 @@ while level_manager.current_level == "intro":
     screen.blit(intro_black_surface, (0, 0))
     screen.blit(intro_logo, intro_logo_rect)
     
-    if  text_rects[-1].bottom <= -150:
+    if text_rects[-1].bottom <= -150:
         pygame.time.delay(2000)
         level_manager.current_level = "level_1"
     pygame.display.flip()
